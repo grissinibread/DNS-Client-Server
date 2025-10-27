@@ -11,7 +11,6 @@ def listen():
 
             # Check RR table for record
 
-
             # If not found, add "Record not found" in the DNS response
             # Else, return record in DNS response
 
@@ -27,8 +26,11 @@ def listen():
 
 
 def main():
+    table = RRTable()
     # Add initial records
     # These can be found in the test cases diagram
+    table.add_record(1, "shop.amazone.com", "A", "3.33.147.88", "None", 1)
+    table.add_record(2, "cloud.amazone.com", "A", "3.33.147.88", "None", 0)
 
     amazone_dns_address = ("127.0.0.1", 22000)
     # Bind address to UDP socket
