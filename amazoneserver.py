@@ -1,7 +1,7 @@
 import errno
 import socket
 import sys
-from prettytable import PrettyTable
+from routingtable import RoutingTable
 
 
 def listen():
@@ -50,19 +50,20 @@ def deserialize():
 
 class RRTable:
     def __init__(self):
-        # self.records = ?
+        self.records = RoutingTable()
         self.record_number = 0
 
-    def add_record(self):
-        pass
+    def add_record(self, record_number, name, type, result, ttl, static):
+        self.record_number += 1
+        self.records.add_record(record_number, name, type, result, ttl, static)
 
-    def get_record(self):
-        pass
+    def get_record(self, record_number):
+        return self.records.get_record( record_number)
 
     def display_table(self):
         # Display the table in the following format (include the column names):
         # record_number,name,type,result,ttl,static
-        pass
+        self.records.display_table()
 
 
 class DNSTypes:
