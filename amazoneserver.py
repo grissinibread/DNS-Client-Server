@@ -34,6 +34,8 @@ def main():
 
     amazone_dns_address = ("127.0.0.1", 22000)
     # Bind address to UDP socket
+    connection = UDPConnection()
+    connection.bind(amazone_dns_address)
 
     listen()
 
