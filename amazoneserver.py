@@ -62,9 +62,6 @@ class RRTable:
     def display_table(self):
         # Display the table in the following format (include the column names):
         # record_number,name,type,result,ttl,static
-        rrTable = PrettyTable(['record_number', 'name', 'type', 'result', 'ttl', 'static'])
-
-        print(rrTable)
         pass
 
 
