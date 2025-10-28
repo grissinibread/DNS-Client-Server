@@ -1,23 +1,31 @@
 import errno
 import socket
 import sys
+
 from routingtable import RoutingTable
 
-
-def listen():
+def listen(table):
     try:
         while True:
             # Wait for query
+            udp_connection = UDPConnection()
+
+            message, address = udp_connection.receive_message()
 
             # Check RR table for record
-
             # If not found, add "Record not found" in the DNS response
-            # Else, return record in DNS response
+            #TODO: fix the format of the DNS query
+            if table.get_record(message):
+                response = table.get_record(message)
+            else:
+                response = "Record not found"
 
+            # Else, return record in DNS response
             # The format of the DNS query and response is in the project description
+            udp_connection.send_message(response, address)
 
             # Display RR table
-            pass
+            table.display_table()
     except KeyboardInterrupt:
         print("Keyboard interrupt received, exiting...")
     finally:
@@ -37,8 +45,7 @@ def main():
     connection = UDPConnection()
     connection.bind(amazone_dns_address)
 
-    listen()
-
+    listen(table)
 
 def serialize():
     # Consider creating a serialize function

@@ -11,6 +11,7 @@ class RoutingTable:
                                      "ttl" : ttl,
                                      "static" : static}
 
+    # check what returns if record_number not found
     def get_record(self, record_number):
         return self.table.get(record_number)
 
