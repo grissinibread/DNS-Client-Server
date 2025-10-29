@@ -4,21 +4,29 @@ import sys
 
 from resourcerecordtable import ResourceRecordTable
 
-def listen(table):
+def listen(table, udp_connection):
     try:
         while True:
             # Wait for query
-            udp_connection = UDPConnection()
-
             message, address = udp_connection.receive_message()
+            split_message = message.split()
+            deserialized_message = deserialize(split_message)
 
             # Check RR table for record
             # If not found, add "Record not found" in the DNS response
             #TODO: fix the format of the DNS query
-            if table.get_record(message):
-                response = table.get_record(message)
+            record = table.get_record(deserialized_message["name"])
+            if record is not None:
+                response = serialize(split_message,
+                                     deserialized_message["transaction_id"],
+                                     deserialized_message["flag"],
+                                     deserialized_message["question_name"],
+                                     deserialized_message["question_type"],
+                                     record["name"],
+                                     record["type"],
+                                     record["result"])
             else:
-                response = "Record not found"
+                response = "Record not found" # I'm sure this is not the correct format
 
             # Else, return record in DNS response
             # The format of the DNS query and response is in the project description
@@ -26,47 +34,58 @@ def listen(table):
 
             # Display RR table
             table.display_table()
+
     except KeyboardInterrupt:
         print("Keyboard interrupt received, exiting...")
     finally:
         # Close UDP socket
-        pass
+        udp_connection.close()
 
 
 def main():
     table = RRTable()
     # Add initial records
     # These can be found in the test cases diagram
-    table.add_record(0, "shop.amazone.com", "A", "3.33.147.88", "None", 1)
-    table.add_record(1, "cloud.amazone.com", "A", "3.33.147.88", "None", 0)
+    table.add_record("shop.amazone.com", "A", "3.33.147.88", "None", 1)
+    table.add_record("cloud.amazone.com", "A", "3.33.147.88", "None", 0)
 
     amazone_dns_address = ("127.0.0.1", 22000)
     # Bind address to UDP socket
-    connection = UDPConnection()
-    connection.bind(amazone_dns_address)
+    udp_connection = UDPConnection()
+    udp_connection.bind(amazone_dns_address)
 
-    listen(table)
+    listen(table, udp_connection)
 
-def serialize():
-    # Consider creating a serialize function
-    # This can help prepare data to send through the socket
-    pass
+def serialize(split_message,
+              flag,
+              question_name,
+              question_type,
+              answer_name,
+              answer_type,
+              answer_result,
+              ttl):
+
+    return f"{split_message[0]} {flag} {question_name} {question_type} {answer_name} {answer_type} {answer_result} {ttl}"
 
 
-def deserialize():
-    # Consider creating a deserialize function
-    # This can help prepare data that is received from the socket
-    pass
+# deserialize function to extract the name from the message
+def deserialize(split_message):
+    return {"transaction_id" : split_message[0],
+            "flag" : split_message[1],
+            "question_name" : split_message[2],
+            "question_type" : split_message[3],
+            "answer_name" : split_message[4],
+            "answer_type" : split_message[5],
+            "answer_ttl" : split_message[6],
+            "answer_result" : split_message[7]}
 
 
 class RRTable:
     def __init__(self):
         self.records = ResourceRecordTable()
-        self.record_number = 0
 
-    def add_record(self, record_number, name, type, result, ttl, static):
-        self.record_number += 1
-        self.records.add_record(record_number, name, type, result, ttl, static)
+    def add_record(self, name, record_type, result, ttl, static):
+        self.records.add_record(name, record_type, result, ttl, static)
 
     def get_record(self, record_number):
         return self.records.get_record( record_number)
