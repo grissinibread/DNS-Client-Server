@@ -1,27 +1,27 @@
 import pytest
 
-from routingtable import RoutingTable
+from resourcerecordtable import ResourceRecordTable
 
 @pytest.fixture
 def routing_table():
-    return RoutingTable()
+    return ResourceRecordTable()
 
 def test_initialization(routing_table):
     assert routing_table.table == {}
 
 def test_add_and_get_record(routing_table):
-    routing_table.add_record(1, "example.com", "A", "", 300, True)
-    record = routing_table.get_record(1)
+    routing_table.add_record("example.com" , "A", "", 300, True)
+    record = routing_table.get_record("example.com")
 
-    assert record == {"name": "example.com", "type": "A", "result": "", "ttl": 300, "static": True}
+    assert record == {"record_number": 0, "type": "A", "result": "", "ttl": 300, "static": True}
 
 def test_get_nonexistent_record(routing_table):
-    record = routing_table.get_record(999)
+    record = routing_table.get_record("")
     assert record is None
 
 def test_display_table(capsys, routing_table):
-    routing_table.add_record(1, "example.com", "A", "", 300, True)
-    routing_table.add_record(2, "example.org", "AAAA", "", 200, False)
+    routing_table.add_record("example.com", "A", "", 300, True)
+    routing_table.add_record("example.org", "AAAA", "", 200, False)
 
     routing_table.display_table()
 

@@ -2,7 +2,7 @@ import errno
 import socket
 import sys
 
-from routingtable import RoutingTable
+from resourcerecordtable import ResourceRecordTable
 
 def listen(table):
     try:
@@ -37,8 +37,8 @@ def main():
     table = RRTable()
     # Add initial records
     # These can be found in the test cases diagram
-    table.add_record(1, "shop.amazone.com", "A", "3.33.147.88", "None", 1)
-    table.add_record(2, "cloud.amazone.com", "A", "3.33.147.88", "None", 0)
+    table.add_record(0, "shop.amazone.com", "A", "3.33.147.88", "None", 1)
+    table.add_record(1, "cloud.amazone.com", "A", "3.33.147.88", "None", 0)
 
     amazone_dns_address = ("127.0.0.1", 22000)
     # Bind address to UDP socket
@@ -61,7 +61,7 @@ def deserialize():
 
 class RRTable:
     def __init__(self):
-        self.records = RoutingTable()
+        self.records = ResourceRecordTable()
         self.record_number = 0
 
     def add_record(self, record_number, name, type, result, ttl, static):
