@@ -164,8 +164,10 @@ class RRTable:
         self.thread = threading.Thread(target=self.__decrement_ttl, daemon=True)
         self.thread.start()
 
-        # seed authoritative csums record
         self.add_record("www.csusm.edu", "A", "144.37.5.45", ttl=None, static=True)
+        self.add_record("my.csusm.edu", "A", "144.37.5.150", ttl=None, static=True)
+        self.add_record("amazone.com", "NS", "dns.amazone.com", ttl=None, static=True)
+        self.add_record("dns.amazone.com", "A", "127.0.0.1", ttl=None, static=True)
 
     def add_record(self, name: str, type_name: str, result: str, ttl: int = 60, static: bool = False):
         with self.lock:

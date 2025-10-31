@@ -26,7 +26,15 @@ class AmazoneServer:
             "record_no": self.record_counter,
             "name": "shop.amazone.com",
             "type": "A",
-            "result": "205.251.242.103",
+            "result": "3.33.147.88",
+            "ttl": None,
+            "static": True
+        })
+        self.rr_table.append({
+            "record_no": self.record_counter,
+            "name": "cloud.amazone.com",
+            "type": "A",
+            "result": "15.197.140.28",
             "ttl": None,
             "static": True
         })
